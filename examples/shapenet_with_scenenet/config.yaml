@@ -31,10 +31,11 @@
       "module": "lighting.SceneNetLighting"
     },
     {
-      "module": "loader.ShapeNetLoader",
+      "module": "loader.ShapeNetMultiLoader",
       "config": {
         "data_path": "<args:2>",
         "used_synset_id": "02801938",
+        "num_objects": 3,
         "add_properties": {
           "cp_shape_net_object": True,
           # set the custom property physics to True
@@ -56,7 +57,8 @@
         # Sets the location of this entity above a bed
         "location": {
           "provider": "sampler.UpperRegionSampler",
-          "min_height": 0.3,
+          "min_height": 0.1,
+          "max_height": 0.5,
           "to_sample_on": {
               "provider": "getter.Entity",
               "conditions": {
@@ -74,15 +76,52 @@
       }
     },
     {
+      "module": "loader.CCMaterialLoader",
+      "config": {
+        "folder_path": "resources/cctextures"
+      }
+    },
+    {
+      "module": "manipulators.EntityManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Entity",
+          "conditions": {
+            # "name": "ground_plane.*"
+            "cp_shape_net_object": True
+          }
+        },
+        "mode": "once_for_all",
+        "cf_randomize_materials": {
+          "randomization_level": 1,
+          "materials_to_replace_with": {
+            "provider": "getter.Material",
+            "random_samples": 1,
+            "conditions": {
+              "cp_is_cc_texture": True
+            }
+          }
+        }
+      }
+    },
+    {
       "module": "object.PhysicsPositioning",
       "config": {
-        "solver_iters": 30,
-        "substeps_per_frame": 40,
-        "min_simulation_time": 0.5,
-        "max_simulation_time": 4,
-        "check_object_interval": 0.25,
-        "mass_scaling": True,
-        "mass_factor": 2000,
+        "min_simulation_time": 3,
+        "max_simulation_time": 10,
+        "check_object_interval": 1,
+        "solver_iters": 25,
+        "substeps_per_frame": 20,
+        "friction": 100.0,
+        "linear_damping": 0.99,
+        "angular_damping": 0.99,
+        # "solver_iters": 30,
+        # "substeps_per_frame": 40,
+        # "min_simulation_time": 0.5,
+        # "max_simulation_time": 4,
+        # "check_object_interval": 0.25,
+        # "mass_scaling": True,
+        # "mass_factor": 2000,
         "collision_margin": 0.00001,
         "collision_shape": "MESH"
       }

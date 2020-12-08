@@ -5,6 +5,7 @@ if version_info.major == 2:
 
 import os
 import csv
+import urllib
 from urllib.request import urlretrieve, build_opener, install_opener
 import subprocess
 
@@ -21,8 +22,8 @@ if __name__ == "__main__":
 
     if not os.path.exists(cc_texture_dir):
         os.makedirs(cc_texture_dir)
-    else:
-        raise Exception("The folder already exists!")
+    # else:
+    #     raise Exception("The folder already exists!")
 
     # download the csv file, which contains all the download links
     csv_url = "https://cc0textures.com/api/v1/downloads_csv"
@@ -55,7 +56,11 @@ if __name__ == "__main__":
         if not os.path.exists(current_folder):
             os.makedirs(current_folder)
         current_file_path = os.path.join(current_folder, "{}.zip".format(asset))
-        urlretrieve(link, current_file_path)
+        try: 
+            urlretrieve(link, current_file_path)
+        except (urllib.error.HTTPError, ConnectionResetError) as e: 
+            print("Skip")
+            continue
         subprocess.call(["unzip {} -d {}> /dev/null".format(current_file_path, current_folder)], shell=True)
         os.remove(current_file_path)
 

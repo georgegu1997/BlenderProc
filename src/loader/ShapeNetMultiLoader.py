@@ -10,7 +10,7 @@ from src.utility.Utility import Utility
 from src.utility.LabelIdMapping import LabelIdMapping
 
 
-class ShapeNetLoader(LoaderInterface):
+class ShapeNetMultiLoader(LoaderInterface):
     """
     This loads an object from ShapeNet based on the given synset_id, which specifies the category of objects to use.
 
@@ -37,9 +37,10 @@ class ShapeNetLoader(LoaderInterface):
 
         self._data_path = Utility.resolve_path(self.config.get_string("data_path"))
         self._used_synset_id = self.config.get_string("used_synset_id")
+        self._num_objects = self.config.get_int("num_objects", 3)
 
         taxonomy_file_path = os.path.join(self._data_path, "taxonomy.json")
-        self._files_with_fitting_synset = ShapeNetLoader.get_files_with_synset(self._used_synset_id, taxonomy_file_path,
+        self._files_with_fitting_synset = ShapeNetMultiLoader.get_files_with_synset(self._used_synset_id, taxonomy_file_path,
                                                                                self._data_path)
 
     @staticmethod
@@ -71,17 +72,19 @@ class ShapeNetLoader(LoaderInterface):
         """
         Uses the loaded .obj files and picks one randomly and loads it
         """
-        selected_obj = random.choice(self._files_with_fitting_synset)
+        # selected_obj = random.choice(self._files_with_fitting_synset)
         # selected_obj = self._files_with_fitting_synset[0]
-        loaded_obj = Utility.import_objects(selected_obj)
+        for i in range(self._num_objects):
+            selected_obj = random.choice(self._files_with_fitting_synset)
+            loaded_obj = Utility.import_objects(selected_obj)
 
-        self._correct_materials(loaded_obj)
+            self._correct_materials(loaded_obj)
 
-        self._set_properties(loaded_obj)
+            self._set_properties(loaded_obj)
 
-        if "void" in LabelIdMapping.label_id_map:  # Check if using an id map
-            for obj in loaded_obj:
-                obj['category_id'] = LabelIdMapping.label_id_map["void"]
+            if "void" in LabelIdMapping.label_id_map:  # Check if using an id map
+                for obj in loaded_obj:
+                    obj['category_id'] = LabelIdMapping.label_id_map["void"]
 
     def _correct_materials(self, objects):
         """

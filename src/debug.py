@@ -27,8 +27,13 @@ for module in list(sys.modules.keys()):
 
 from src.main.Pipeline import Pipeline
 
-config_path = "examples/debugging/config.yaml"
-args = []  # Put in here arguments to use for filling the placeholders in the config file.
+config_path = "examples/shapenet_with_scenenet/config.yaml"
+args = [
+    "resources/scenenet/SceneNetData/1Bedroom/bedroom_1.obj",
+    "resources/scenenet/texture_library/",
+    "/datasets/shapenet/ShapeNetCore.v2/",
+    "examples/shapenet_with_scenenet/output"
+]  # Put in here arguments to use for filling the placeholders in the config file.
 
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)
 for window in bpy.context.window_manager.windows:
@@ -41,7 +46,7 @@ for window in bpy.context.window_manager.windows:
             break
 
 # Store temp files in the same directory for debugging
-temp_dir = "examples/debugging/temp"
+temp_dir = "examples/shapenet_with_scenenet/temp"
 
 try:
     # In this debug case the rendering is avoided, everything is executed except the final render step
