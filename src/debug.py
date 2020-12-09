@@ -31,7 +31,7 @@ config_path = "examples/shapenet_with_scenenet/config.yaml"
 args = [
     "resources/scenenet/SceneNetData/1Bedroom/bedroom_1.obj",
     "resources/scenenet/texture_library/",
-    "/datasets/shapenet/ShapeNetCore.v2/",
+    "~/datasets/shapenet/ShapeNetCore.v2/",
     "examples/shapenet_with_scenenet/output"
 ]  # Put in here arguments to use for filling the placeholders in the config file.
 
