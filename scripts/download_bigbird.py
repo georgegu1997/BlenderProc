@@ -24,8 +24,13 @@ if __name__ == "__main__":
     if not os.path.exists(bigbird_dir):
         os.makedirs(bigbird_dir)
 
-    for obj_name in OBJECT_NAMES:
+    for index, obj_name in enumerate(OBJECT_NAMES):
+        print("Download asset: {} of {}/{}".format(obj_name, index, len(OBJECT_NAMES)))
+
         processed_url = "http://rll.berkeley.edu/bigbird/aliases/7c32cd7e8f/export/%s/processed.tgz" % obj_name
         current_file_path = os.path.join(bigbird_dir, "%s_processed.tgz" % obj_name)
-        
+        urlretrieve(processed_url, current_file_path)
+        subprocess.call(["tar zxvf {} -C {}> /dev/null".format(current_file_path, bigbird_dir)], shell=True)
+        # os.remove(current_file_path)
+
     

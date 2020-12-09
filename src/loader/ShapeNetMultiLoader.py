@@ -3,12 +3,17 @@ import json
 import os
 import random
 
+from mathutils import Matrix, Vector
+
 from numpy.lib.arraypad import _set_reflect_both
 
 from src.loader.LoaderInterface import LoaderInterface
 from src.utility.Utility import Utility
 from src.utility.LabelIdMapping import LabelIdMapping
 
+import json
+SHAPENET_OBJECTS_JSON_PATH = "/home/qiaog/pose-est/BlenderProc/examples/shapenet_with_scenenet/training_shapenet_objects.json"
+SHAPENET_TABLES_JSON_PATH = "/home/qiaog/pose-est/BlenderProc/examples/shapenet_with_scenenet/training_shapenet_tables.json"
 
 class ShapeNetMultiLoader(LoaderInterface):
     """
@@ -40,33 +45,17 @@ class ShapeNetMultiLoader(LoaderInterface):
         self._num_objects = self.config.get_int("num_objects", 3)
 
         taxonomy_file_path = os.path.join(self._data_path, "taxonomy.json")
-        self._files_with_fitting_synset = ShapeNetMultiLoader.get_files_with_synset(self._used_synset_id, taxonomy_file_path,
-                                                                               self._data_path)
+        # self._files_with_fitting_synset = ShapeNetMultiLoader.get_files_with_synset(self._used_synset_id, taxonomy_file_path,
+        #                                                                        self._data_path)
+        self._objects_used = json.load(open(SHAPENET_OBJECTS_JSON_PATH, 'r'))
+        self._tables_used = json.load(open(SHAPENET_TABLES_JSON_PATH, 'r'))
+        self._taxonomy = json.load(open(taxonomy_file_path, 'r'))
 
-    @staticmethod
-    def get_files_with_synset(used_synset_id, path_to_taxonomy_file, data_path):
-        """
-        Returns a list of a .obj file for the given synset_id
-        :param used_synset_id: the id of the category something like: '02691156', see the data_path folder for more ids
-        :param path_to_taxonomy_file: path to the taxonomy.json file, should be in the data_path, too
-        :param data_path: path to the ShapeNetCore.v2 folder
-        :return: list of .obj files, which are in the synset_id folder, based on the given taxonomy
-        """
-        if os.path.exists(path_to_taxonomy_file):
-            files = []
-            with open(path_to_taxonomy_file, "r") as f:
-                loaded_data = json.load(f)
-                for block in loaded_data:
-                    if "synsetId" in block:
-                        synset_id = block["synsetId"]
-                        if synset_id == used_synset_id or used_synset_id in block["children"]:
-                            id_path = os.path.join(data_path, synset_id)
-                            files.extend(glob.glob(os.path.join(id_path, "*", "models", "*.obj")))
-            # Sort files to make random choice deterministic
-            files.sort()
-            return files
-        else:
-            raise Exception("The taxonomy file could not be found: {}".format(path_to_taxonomy_file))
+        self._files_used = []
+        for synset_name, obj_ids in self._objects_used.items():
+            synset_id = next(tax['synsetId'] for tax in self._taxonomy if tax['name'] == synset_name)
+            for obj_id in obj_ids:
+                self._files_used.append(os.path.join(self._data_path, synset_id, obj_id, "models", "model_normalized.obj"))
 
     def run(self):
         """
@@ -75,8 +64,11 @@ class ShapeNetMultiLoader(LoaderInterface):
         # selected_obj = random.choice(self._files_with_fitting_synset)
         # selected_obj = self._files_with_fitting_synset[0]
         for i in range(self._num_objects):
-            selected_obj = random.choice(self._files_with_fitting_synset)
+            selected_obj = random.choice(self._files_used)
             loaded_obj = Utility.import_objects(selected_obj)
+            
+            for obj in loaded_obj:
+                obj.scale = (0.2, 0.2, 0.2)
 
             self._correct_materials(loaded_obj)
 
@@ -85,6 +77,7 @@ class ShapeNetMultiLoader(LoaderInterface):
             if "void" in LabelIdMapping.label_id_map:  # Check if using an id map
                 for obj in loaded_obj:
                     obj['category_id'] = LabelIdMapping.label_id_map["void"]
+                    x, y, z = obj.dimensions
 
     def _correct_materials(self, objects):
         """

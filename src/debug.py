@@ -32,7 +32,8 @@ args = [
     "resources/scenenet/SceneNetData/1Bedroom/bedroom_1.obj",
     "resources/scenenet/texture_library/",
     "~/datasets/shapenet/ShapeNetCore.v2/",
-    "examples/shapenet_with_scenenet/output"
+    "examples/shapenet_with_scenenet/output",
+    "resources/cctextures"
 ]  # Put in here arguments to use for filling the placeholders in the config file.
 
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)
