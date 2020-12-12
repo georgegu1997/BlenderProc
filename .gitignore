@@ -11,6 +11,9 @@ resources/scenenet/SceneNetData
 resources/scenenet/texture*
 resources/blenderkit
 resources/pix3d
+resources/bigbird
+examples/*/temp
+notebooks
 *.blend1
 .vscode
 *.pyc

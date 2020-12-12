@@ -396,7 +396,10 @@ class EntityManipulator(Module):
         bpy.context.view_layer.objects.active = entity
         if hasattr(entity, "data") and entity.data is not None and \
                 hasattr(entity.data, "uv_layers") and entity.data.uv_layers is not None:
-            if not BlenderUtility.check_if_uv_coordinates_are_set(entity):
+            print("here 1")
+            # if not BlenderUtility.check_if_uv_coordinates_are_set(entity):
+            if True:
+                print("here 2")
                 bpy.ops.object.editmode_toggle()
                 if value["projection"] == "cube":
                     bpy.ops.uv.cube_project()

@@ -33,7 +33,8 @@ args = [
     "resources/scenenet/texture_library/",
     "~/datasets/shapenet/ShapeNetCore.v2/",
     "examples/shapenet_with_scenenet/output",
-    "resources/cctextures"
+    "resources/cctextures",
+    "~/datasets/mscoco/train2017"
 ]  # Put in here arguments to use for filling the placeholders in the config file.
 
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)

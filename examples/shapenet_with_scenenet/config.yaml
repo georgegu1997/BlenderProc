@@ -29,7 +29,8 @@
         }
       }
     },
-    ##### Beginning of the BOP positioning
+
+    ##### Beginning of the BOP positioning #####
     {
       "module": "constructor.BasicMeshInitializer",
       "config": {
@@ -113,6 +114,13 @@
       }
     },
     {
+      "module": "loader.COCOMaterialLoader",
+      "config": {
+        "data_path": "<args:5>",
+        "num_used": 20
+      }
+    },
+    {
       "module": "loader.CCMaterialLoader",
       "config": {
         "folder_path": "<args:4>"
@@ -140,6 +148,28 @@
         }
       }
     },
+    # {
+    #   "module": "manipulators.EntityManipulator",
+    #   "config": {
+    #     "selector": {
+    #       "provider": "getter.Entity",
+    #       "conditions": {
+    #         "cp_shape_net_object": True
+    #       }
+    #     },
+    #     "mode": "once_for_each",
+    #     "cf_randomize_materials": {
+    #       "randomization_level": 1,
+    #       "materials_to_replace_with": {
+    #         "provider": "getter.Material",
+    #         "random_samples": 1,
+    #         "conditions": {
+    #           "cp_is_cc_texture": True
+    #         }
+    #       }
+    #     }
+    #   }
+    # },
     {
       "module": "manipulators.EntityManipulator",
       "config": {
@@ -156,12 +186,44 @@
             "provider": "getter.Material",
             "random_samples": 1,
             "conditions": {
-              "cp_is_cc_texture": True
+              "cp_is_coco_texture": True
             }
           }
         }
       }
     },
+    {
+      "module": "manipulators.EntityManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Entity",
+          "conditions": {
+            "cp_shape_net_object": True
+          }
+        },
+        "cf_add_uv_mapping":{
+          "projection": "sphere"
+        },
+      }
+    },
+    # {
+    #   "module": "manipulators.MaterialManipulator",
+    #   "config": {
+    #     "selector": {
+    #       "provider": "getter.Material",
+    #       "conditions": {
+    #         "name": "material*"
+    #       }
+    #     },
+    #     "mode": "once_for_each",
+    #     "cf_textures": {
+    #       "Base Color": {
+    #         "provider": "sampler.Path",
+    #         "path": "<args:5>/*.jpg"
+    #       }
+    #     }
+    #   }
+    # },
     {
       "module": "object.ObjectPoseSampler",
       "config": {
@@ -208,8 +270,6 @@
         }
       }
     },
-    
-
     ############## End of the BOP positioning 
     
     # {
@@ -308,6 +368,7 @@
     #     "collision_shape": "MESH"
     #   }
     # },
+
     {
       "module": "camera.CameraSampler",
       "config": {
