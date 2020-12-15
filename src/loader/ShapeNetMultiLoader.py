@@ -74,10 +74,13 @@ class ShapeNetMultiLoader(LoaderInterface):
 
             self._set_properties(loaded_obj)
 
-            if "void" in LabelIdMapping.label_id_map:  # Check if using an id map
-                for obj in loaded_obj:
-                    obj['category_id'] = LabelIdMapping.label_id_map["void"]
-                    x, y, z = obj.dimensions
+            for obj in loaded_obj:
+                obj['category_id'] = i + 300
+
+            # if "void" in LabelIdMapping.label_id_map:  # Check if using an id map
+            #     for obj in loaded_obj:
+            #         obj['category_id'] = LabelIdMapping.label_id_map["void"]
+            #         x, y, z = obj.dimensions
 
     def _correct_materials(self, objects):
         """

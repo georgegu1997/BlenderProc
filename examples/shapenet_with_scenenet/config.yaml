@@ -2,10 +2,10 @@
 {
   "version": 3,
   "setup": {
-    "blender_install_path": "/home_local/<env:USER>/blender/",
-    "pip": [
-      "h5py"
-    ]
+    "blender_install_path": "/home/<env:USER>/blender/",
+    # "pip": [
+    #   "h5py"
+    # ]
   },
   "modules": [
     {
@@ -25,7 +25,8 @@
         "add_properties": {
           "cp_shape_net_object": True,
           # set the custom property physics to True
-          "cp_physics": True
+          "cp_physics": True,
+          # "cp_category_id": 10
         }
       }
     },
@@ -87,6 +88,7 @@
           }
         },
         "cp_physics": False,
+        "cp_category_id": 0
       }
     },
     {
@@ -368,7 +370,6 @@
     #     "collision_shape": "MESH"
     #   }
     # },
-
     {
       "module": "camera.CameraSampler",
       "config": {
@@ -415,6 +416,18 @@
         "samples": 150,
         "render_distance": True,
         "render_normals": True
+      }
+    },
+    {
+      "module": "manipulators.WorldManipulator",
+      "config": {
+        "cf_set_world_category_id": 0  # this sets the worlds background category id to 0
+      }
+    },
+    {
+      "module": "renderer.SegMapRenderer",
+      "config": {
+        "map_by": ["class", "instance"]
       }
     },
     {
