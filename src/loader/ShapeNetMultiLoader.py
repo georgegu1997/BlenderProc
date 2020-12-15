@@ -74,6 +74,8 @@ class ShapeNetMultiLoader(LoaderInterface):
 
             print("len(loaded_obj)", len(loaded_obj))
             for obj in loaded_obj:
+                obj_name = "obj_%04d" % selected_obj_info['obj_id']
+                obj.name = obj_name
                 obj.scale = (0.4, 0.4, 0.4)
                 
                 print("len(obj.material_slots)", len(obj.material_slots))
@@ -84,6 +86,18 @@ class ShapeNetMultiLoader(LoaderInterface):
                     texture_path = os.path.join(self._mscoco_path, coco_filename)
                     mat_coco = self._load_mat(texture_path)
                     mat.material = mat_coco
+
+                # Save the selected obj
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.editmode_toggle()
+                bpy.ops.uv.sphere_project()
+                bpy.ops.object.editmode_toggle()
+
+                save_obj_path = os.path.join(self._output_dir, "objects", "%s.obj" % obj_name)
+                if not os.path.exists(save_obj_path):
+                    if not os.path.exists(os.path.dirname(save_obj_path)):
+                        os.makedirs(os.path.dirname(save_obj_path))
+                    bpy.ops.export_scene.obj(filepath=save_obj_path, use_selection=True)
 
             self._correct_materials(loaded_obj)
             self._set_properties(loaded_obj)

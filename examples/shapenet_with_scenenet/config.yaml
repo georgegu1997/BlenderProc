@@ -168,20 +168,6 @@
         }
       }
     },
-    {
-      "module": "manipulators.EntityManipulator",
-      "config": {
-        "selector": {
-          "provider": "getter.Entity",
-          "conditions": {
-            "cp_shape_net_object": True
-          }
-        },
-        "cf_add_uv_mapping":{
-          "projection": "sphere"
-        },
-      }
-    },
     
     ##### Sample the pose and physical simulation #####
     {
@@ -297,6 +283,15 @@
         }
         ]
       }
+    },
+    {
+      "module": "writer.ObjectStateWriter"
+    },
+    {
+      "module": "writer.LightStateWriter"
+    },
+    {
+      "module": "writer.CameraStateWriter"
     },
     {
       "module": "renderer.RgbRenderer",
