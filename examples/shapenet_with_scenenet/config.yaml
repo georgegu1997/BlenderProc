@@ -317,6 +317,7 @@
     {
       "module": "writer.Hdf5Writer",
       "config": {
+        "append_to_existing_output": True,
         "postprocessing_modules": {
           "distance": [
             {"module": "postprocessing.TrimRedundantChannels"},
