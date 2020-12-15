@@ -29,12 +29,10 @@ from src.main.Pipeline import Pipeline
 
 config_path = "examples/shapenet_with_scenenet/config.yaml"
 args = [
-    "resources/scenenet/SceneNetData/1Bedroom/bedroom_1.obj",
-    "resources/scenenet/texture_library/",
-    "~/datasets/shapenet/ShapeNetCore.v2/",
     "examples/shapenet_with_scenenet/output",
+    "~/datasets/shapenet/ShapeNetCore.v2/",
+    "~/datasets/mscoco/train2017",
     "resources/cctextures",
-    "~/datasets/mscoco/train2017"
 ]  # Put in here arguments to use for filling the placeholders in the config file.
 
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)

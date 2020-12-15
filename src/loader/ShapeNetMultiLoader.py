@@ -72,12 +72,17 @@ class ShapeNetMultiLoader(LoaderInterface):
 
             loaded_obj = Utility.import_objects(selected_obj_path)
 
-            texture_path = os.path.join(self._mscoco_path, selected_obj_info['coco_filename'])
-            mat_coco = self._load_mat(texture_path)
-
+            print("len(loaded_obj)", len(loaded_obj))
             for obj in loaded_obj:
                 obj.scale = (0.4, 0.4, 0.4)
-                for mat in obj.material_slots:
+                
+                print("len(obj.material_slots)", len(obj.material_slots))
+                for j in range(len(obj.material_slots)):
+                    mat = obj.material_slots[j]
+
+                    coco_filename = selected_obj_info['coco_filenames'][j % len(selected_obj_info['coco_filenames'])]
+                    texture_path = os.path.join(self._mscoco_path, coco_filename)
+                    mat_coco = self._load_mat(texture_path)
                     mat.material = mat_coco
 
             self._correct_materials(loaded_obj)
@@ -89,7 +94,7 @@ class ShapeNetMultiLoader(LoaderInterface):
     def _load_mat(self, image_path):
         image_name = os.path.basename(image_path).split(".")[0]
 
-        new_mat = bpy.data.materials.new("coco")
+        new_mat = bpy.data.materials.new(image_name)
         new_mat["is_coco_texture"] = True
         new_mat["image_name"] = image_name
         new_mat.use_nodes = True
