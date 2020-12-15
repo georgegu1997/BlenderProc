@@ -3,6 +3,8 @@ import json
 import os
 import random
 
+import bpy
+
 from mathutils import Matrix, Vector
 
 from numpy.lib.arraypad import _set_reflect_both
@@ -12,8 +14,12 @@ from src.utility.Utility import Utility
 from src.utility.LabelIdMapping import LabelIdMapping
 
 import json
-SHAPENET_OBJECTS_JSON_PATH = "/home/qiaog/pose-est/BlenderProc/examples/shapenet_with_scenenet/training_shapenet_objects.json"
-SHAPENET_TABLES_JSON_PATH = "/home/qiaog/pose-est/BlenderProc/examples/shapenet_with_scenenet/training_shapenet_tables.json"
+# SHAPENET_OBJECTS_JSON_PATH = "/home/qiaog/pose-est/BlenderProc/examples/shapenet_with_scenenet/training_shapenet_objects.json"
+# SHAPENET_TABLES_JSON_PATH = "/home/qiaog/pose-est/BlenderProc/examples/shapenet_with_scenenet/training_shapenet_tables.json"
+
+OBJ_LIST_PATH = "/home/qiaog/pose-est/BlenderProc/notebooks/objs.txt"
+SHAPNET_PATH = "/home/qiaog/datasets/shapenet/ShapeNetCore.v2/"
+MSCOCO_PATH = "/home/qiaog/datasets/mscoco/train2017/"
 
 class ShapeNetMultiLoader(LoaderInterface):
     """
@@ -40,22 +46,14 @@ class ShapeNetMultiLoader(LoaderInterface):
     def __init__(self, config):
         LoaderInterface.__init__(self, config)
 
-        self._data_path = Utility.resolve_path(self.config.get_string("data_path"))
-        self._used_synset_id = self.config.get_string("used_synset_id")
+        self._shapenet_path = Utility.resolve_path(self.config.get_string("shapenet_path", SHAPNET_PATH))
+        self._mscoco_path = Utility.resolve_path(self.config.get_string("mscoco_path", MSCOCO_PATH))
+        self._obj_list_path = Utility.resolve_path(self.config.get_string("obj_list_path", OBJ_LIST_PATH))
+
         self._num_objects = self.config.get_int("num_objects", 3)
 
-        taxonomy_file_path = os.path.join(self._data_path, "taxonomy.json")
-        # self._files_with_fitting_synset = ShapeNetMultiLoader.get_files_with_synset(self._used_synset_id, taxonomy_file_path,
-        #                                                                        self._data_path)
-        self._objects_used = json.load(open(SHAPENET_OBJECTS_JSON_PATH, 'r'))
-        self._tables_used = json.load(open(SHAPENET_TABLES_JSON_PATH, 'r'))
-        self._taxonomy = json.load(open(taxonomy_file_path, 'r'))
-
-        self._files_used = []
-        for synset_name, obj_ids in self._objects_used.items():
-            synset_id = next(tax['synsetId'] for tax in self._taxonomy if tax['name'] == synset_name)
-            for obj_id in obj_ids:
-                self._files_used.append(os.path.join(self._data_path, synset_id, obj_id, "models", "model_normalized.obj"))
+        with open(self._obj_list_path) as f:
+            self._obj_list = json.load(f)
 
     def run(self):
         """
@@ -64,23 +62,49 @@ class ShapeNetMultiLoader(LoaderInterface):
         # selected_obj = random.choice(self._files_with_fitting_synset)
         # selected_obj = self._files_with_fitting_synset[0]
         for i in range(self._num_objects):
-            selected_obj = random.choice(self._files_used)
-            loaded_obj = Utility.import_objects(selected_obj)
-            
+            selected_obj_info = random.choice(self._obj_list)
+            selected_obj_path = os.path.join(
+                self._shapenet_path, 
+                selected_obj_info['shapenet_synset_id'], 
+                selected_obj_info['shapenet_obj_id'], 
+                "models", "model_normalized.obj"
+            )
+
+            loaded_obj = Utility.import_objects(selected_obj_path)
+
+            texture_path = os.path.join(self._mscoco_path, selected_obj_info['coco_filename'])
+            mat_coco = self._load_mat(texture_path)
+
             for obj in loaded_obj:
-                obj.scale = (0.2, 0.2, 0.2)
+                obj.scale = (0.4, 0.4, 0.4)
+                for mat in obj.material_slots:
+                    mat.material = mat_coco
 
             self._correct_materials(loaded_obj)
-
             self._set_properties(loaded_obj)
 
             for obj in loaded_obj:
-                obj['category_id'] = i + 300
+                obj['category_id'] = selected_obj_info['obj_id']
 
-            # if "void" in LabelIdMapping.label_id_map:  # Check if using an id map
-            #     for obj in loaded_obj:
-            #         obj['category_id'] = LabelIdMapping.label_id_map["void"]
-            #         x, y, z = obj.dimensions
+    def _load_mat(self, image_path):
+        image_name = os.path.basename(image_path).split(".")[0]
+
+        new_mat = bpy.data.materials.new("coco")
+        new_mat["is_coco_texture"] = True
+        new_mat["image_name"] = image_name
+        new_mat.use_nodes = True
+
+        nodes = new_mat.node_tree.nodes
+        links = new_mat.node_tree.links
+
+        principled_bsdf = Utility.get_the_one_node_with_type(nodes, "BsdfPrincipled")
+        base_color = nodes.new('ShaderNodeTexImage')
+        if not os.path.exists(image_path):
+            raise Exception("The texture file {} does not exist".format(image_path))
+        base_color.image = bpy.data.images.load(image_path, check_existing=True)
+        
+        links.new(base_color.outputs["Color"], principled_bsdf.inputs["Base Color"])
+        return new_mat
 
     def _correct_materials(self, objects):
         """

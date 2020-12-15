@@ -21,12 +21,11 @@
       "config": {
         "data_path": "<args:2>",
         "used_synset_id": "02801938",
-        "num_objects": 10,
+        "num_objects": 15,
         "add_properties": {
           "cp_shape_net_object": True,
           # set the custom property physics to True
           "cp_physics": True,
-          # "cp_category_id": 10
         }
       }
     },
@@ -115,13 +114,13 @@
         }
       }
     },
-    {
-      "module": "loader.COCOMaterialLoader",
-      "config": {
-        "data_path": "<args:5>",
-        "num_used": 20
-      }
-    },
+    # {
+    #   "module": "loader.COCOMaterialLoader",
+    #   "config": {
+    #     "data_path": "<args:5>",
+    #     "num_used": 20
+    #   }
+    # },
     {
       "module": "loader.CCMaterialLoader",
       "config": {
@@ -172,28 +171,28 @@
     #     }
     #   }
     # },
-    {
-      "module": "manipulators.EntityManipulator",
-      "config": {
-        "selector": {
-          "provider": "getter.Entity",
-          "conditions": {
-            "cp_shape_net_object": True
-          }
-        },
-        "mode": "once_for_each",
-        "cf_randomize_materials": {
-          "randomization_level": 1,
-          "materials_to_replace_with": {
-            "provider": "getter.Material",
-            "random_samples": 1,
-            "conditions": {
-              "cp_is_coco_texture": True
-            }
-          }
-        }
-      }
-    },
+    # {
+    #   "module": "manipulators.EntityManipulator",
+    #   "config": {
+    #     "selector": {
+    #       "provider": "getter.Entity",
+    #       "conditions": {
+    #         "cp_shape_net_object": True
+    #       }
+    #     },
+    #     "mode": "once_for_each",
+    #     "cf_randomize_materials": {
+    #       "randomization_level": 1,
+    #       "materials_to_replace_with": {
+    #         "provider": "getter.Material",
+    #         "random_samples": 1,
+    #         "conditions": {
+    #           "cp_is_coco_texture": True
+    #         }
+    #       }
+    #     }
+    #   }
+    # },
     {
       "module": "manipulators.EntityManipulator",
       "config": {
@@ -239,13 +238,13 @@
           "provider":"sampler.Uniform3d",
           "min": {
             "provider": "sampler.Uniform3d",
-            "min": [-0.4, -0.4, 0.0],
-            "max": [-0.3, -0.3, 0.0]
+            "min": [-0.6, -0.6, 0.0],
+            "max": [-0.5, -0.5, 0.0]
           },
           "max": {
             "provider": "sampler.Uniform3d",
-            "min": [0.3, 0.3, 0.4],
-            "max": [0.4, 0.4, 0.6]
+            "min": [0.5, 0.5, 0.6],
+            "max": [0.6, 0.6, 0.8]
           }
         },
         "rot_sampler":{
