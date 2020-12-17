@@ -32,6 +32,7 @@ args = [
     "examples/shapenet_with_scenenet/output",
     "~/datasets/shapenet/ShapeNetCore.v2/",
     "~/datasets/mscoco/train2017",
+    "resources/objs.txt", 
     "resources/cctextures",
 ]  # Put in here arguments to use for filling the placeholders in the config file.
 
