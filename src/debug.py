@@ -27,10 +27,19 @@ for module in list(sys.modules.keys()):
 
 from src.main.Pipeline import Pipeline
 
-config_path = "examples/shapenet_with_scenenet/config.yaml"
+# config_path = "examples/shapenet_with_scenenet/config.yaml"
+# args = [
+#     "examples/shapenet_with_scenenet/output",
+#     "~/datasets/shapenet/ShapeNetCore.v2/",
+#     "~/datasets/mscoco/train2017",
+#     "resources/objs.txt", 
+#     "resources/cctextures",
+# ]  # Put in here arguments to use for filling the placeholders in the config file.
+
+config_path = "examples/bigbird_physical/config.yaml"
 args = [
-    "examples/shapenet_with_scenenet/output",
-    "~/datasets/shapenet/ShapeNetCore.v2/",
+    "examples/bigbird_physical/output",
+    "resources/bigbird",
     "~/datasets/mscoco/train2017",
     "resources/objs.txt", 
     "resources/cctextures",

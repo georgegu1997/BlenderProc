@@ -1,0 +1,345 @@
+# Args: <obj_file> <texture_file> <path_to_shape-net-core> <output_dir>
+{
+  "version": 3,
+  "setup": {
+    "blender_install_path": "/home/<env:USER>/blender/",
+    # "pip": [
+    #   "h5py"
+    # ]
+  },
+  "modules": [
+    {
+      "module": "main.Initializer",
+      "config":{
+        "global": {
+          "output_dir": "<args:0>"
+        }
+      }
+    },
+
+    ##### Load shapnet objects and COCO textures with predefined correspondence #####
+    # {
+    #   "module": "loader.ShapeNetMultiLoader",
+    #   "config": {
+    #     "shapenet_path": "<args:1>",
+    #     "mscoco_path": "<args:2>",
+    #     "obj_list_path": "<args:3>",
+    #     "num_objects": 15,
+    #     "add_properties": {
+    #       "cp_shape_net_object": True,
+    #       # set the custom property physics to True
+    #       "cp_physics": True,
+    #     }
+    #   }
+    # },
+    {
+      "module": "loader.BigBirdLoader",
+      "config": {
+        "bigbird_path": "<args:1>",
+        "num_objects": 10,
+        "add_properties": {
+          "cp_bigbird_object": True,
+          # set the custom property physics to True
+          "cp_physics": True,
+        }
+      }
+    },
+
+    # randomized the material
+    {
+      "module": "manipulators.MaterialManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Material",
+          "conditions": [
+            "cp_is_coco_texture": True
+          ]
+        },
+        "cf_set_specular": {
+          "provider": "sampler.Value",
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cf_set_roughness": {
+          "provider": "sampler.Value",
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0
+        }
+      }
+    },
+
+    ##### Constructing the room with 4 walls #####
+    {
+      "module": "constructor.BasicMeshInitializer",
+      "config": {
+        "meshes_to_add": [
+        {
+          "type": "plane",
+          "name": "ground_plane0",
+          "scale": [2, 2, 1]
+        },
+        {
+          "type": "plane",
+          "name": "ground_plane1",
+          "scale": [2, 2, 1],
+          "location": [0, -2, 2],
+          "rotation": [-1.570796, 0, 0] # switch the sign to turn the normals to the outside
+        },
+        {
+          "type": "plane",
+          "name": "ground_plane2",
+          "scale": [2, 2, 1],
+          "location": [0, 2, 2],
+          "rotation": [1.570796, 0, 0]
+        },
+        {
+          "type": "plane",
+          "name": "ground_plane4",
+          "scale": [2, 2, 1],
+          "location": [2, 0, 2],
+          "rotation": [0, -1.570796, 0]
+        },
+        {
+          "type": "plane",
+          "name": "ground_plane5",
+          "scale": [2, 2, 1],
+          "location": [-2, 0, 2],
+          "rotation": [0, 1.570796, 0]
+        },
+        {
+          "type": "plane",
+          "name": "light_plane",
+          "location": [0, 0, 10],
+          "scale": [3, 3, 1]
+        }
+        ]
+      }
+    },
+    {
+      "module": "manipulators.EntityManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Entity",
+          "conditions": {
+            "name": '.*plane.*'
+          }
+        },
+        "cp_physics": False,
+        "cp_category_id": 0
+      }
+    },
+    {
+      "module": "manipulators.MaterialManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Material",
+          "conditions": {
+            "name": "light_plane_material"
+          }
+        },
+        "cf_switch_to_emission_shader": {
+          "color": {
+            "provider": "sampler.Color",
+            "min": [0.5, 0.5, 0.5, 1.0],
+            "max": [1.0, 1.0, 1.0, 1.0]
+          },
+          "strength": {
+            "provider": "sampler.Value",
+            "type": "float",
+            "min": 3,
+            "max": 6
+          }
+        }
+      }
+    },
+    {
+      "module": "loader.CCMaterialLoader",
+      "config": {
+        "folder_path": "<args:4>",
+        "used_assets": ['Planks013', 'PavingStones039', 'Rocks022', 'Tiles056', 'Ground025', 'PaintedPlaster003', 'WoodSiding007', 'Bricks025', 'Marble013', 'Wood017', 'Ground022', 'PavingStones064', 'Wood038', 'Leather009', 'Facade009', 'Bark006', 'Plastic009', 'Tiles055', 'CorrugatedSteel003', 'PavingStones075', 'PavingStones074', 'PavingStones095', 'Road002', 'Metal033', 'WoodSiding008', 'Rocks020', 'Concrete026', 'PavingStones070', 'Ground027', 'Fabric035', 'PavingStones043', 'PaintedPlaster007', 'PaintedPlaster011', 'PavingStones069', 'Rock039', 'PavingStones098', 'Concrete032', 'PaintedMetal006', 'Road001', 'Metal015', 'Rock028', 'Ground032', 'Carpet007', 'PaintedMetal017', 'PavingStones088', 'WoodFloor026', 'PaintedPlaster005', 'Rock035', 'Wood042', 'Ground018', 'Fabric033', 'Bricks021', 'Fabric034', 'MetalPlates008', 'Ground026', 'Rust004', 'PavingStones041', 'Tiles069', 'Ground039', 'Rock023', 'Gravel015', 'Marble011', 'Bricks031', 'Wood016', 'Carpet010', 'Bricks045', 'PaintedWood002', 'PaintedMetal018', 'SolarPanel004', 'Wood024', 'PaintedPlaster015', 'Tiles026', 'Leather014', 'PavingStones090', 'Fabric030', 'MetalPlates007', 'Lava001', 'Tiles034', 'PavingStones036', 'Metal031', 'PaintedWood005', 'Plastic008', 'Facade010', 'Concrete028', 'Bricks032', 'PavingStones072', 'Tiles029', 'Pipe001', 'Bricks044', 'Facade013', 'Concrete015', 'SolarPanel003', 'Road005', 'Planks011', 'Facade016', 'PaintedMetal011', 'Rust005', 'Bricks027', 'Tiles052', 'Planks017', 'Rocks017', 'Tiles065', 'Rock019', 'Tiles042', 'Rock018', 'WoodFloor036', 'PavingStones096', 'Ground037', 'Rock022', 'WoodFloor023', 'PaintedPlaster013', 'Metal025', 'Tiles038', 'Facade015', 'Tiles046', 'Facade008', 'Bricks047', 'Rocks023', 'Rocks014', 'Terrain002', 'Facade012', 'PavingStones037', 'PavingStones091', 'Bricks043', 'Wood044', 'Rocks005', 'Rocks015', 'WoodFloor029', 'Planks015', 'Rock020', 'Rocks008', 'Ground024', 'CorrugatedSteel005', 'Gravel010', 'PavingStones032', 'Tiles073', 'Marble014', 'Wood034', 'Tiles047', 'Cardboard004', 'Plastic006', 'PavingStones076', 'Tiles049', 'PavingStones057', 'SurfaceImperfections009', 'Tiles030', 'Candy001', 'Carpet009', 'PavingStones042', 'Terrazzo006', 'PavingStones040', 'WoodFloor035', 'PaintedMetal013', 'PaintedPlaster010', 'Wood023', 'PavingStones056', 'Paint004', 'Fabric029', 'PavingStones085', 'Tiles068', 'Ground031', 'Rocks012', 'Rocks016', 'Wood041', 'Concrete018', 'Planks022', 'Ground034', 'Rocks018', 'PaintedMetal010', 'PavingStones093', 'Tiles035', 'Tiles050', 'Moss001', 'Carpet011', 'Marble007', 'PaintedMetal009', 'PavingStones077', 'SurfaceImperfections010', 'Terrazzo004', 'PavingStones034', 'PavingStones092', 'Concrete034', 'Tiles079', 'WoodFloor018', 'Tiles082', 'Wood045', 'MetalPlates004', 'Metal022', 'MetalPlates006', 'Rock036', 'Cork001', 'Chip005', 'Metal027', 'Marble015', 'ChristmasTreeOrnament002', 'Leather013', 'Bricks029', 'Snow001', 'PavingStones031', 'Rock011', 'Bricks046', 'Rock029', 'PaintedMetal007', 'PavingStones068', 'Planks012', 'Rock032', 'MetalPlates009', 'WoodFloor030', 'Ground038', 'Bricks033', 'PaintedPlaster006', 'WoodFloor038', 'Tiles060', 'Marble009', 'PavingStones052', 'Wood026', 'PaintedPlaster001', 'SolarPanel002', 'PaintedMetal015', 'RoofingTiles003', 'Rocks010', 'WoodFloor027', 'Rock040', 'Bricks049', 'Terrazzo001', 'Leather010', 'Tiles078', 'Tiles045', 'Sponge003', 'Tiles031', 'Terrazzo008', 'Rock010', 'Metal013', 'WoodFloor019', 'Wood050', 'PavingStones062', 'Pipe004', 'Fabric025', 'PavingStones058', 'Snow002', 'Rock033', 'Asphalt016', 'Bark010', 'Bricks026', 'Wood032', 'Tiles036', 'Leather012', 'PavingStones094', 'PaintedPlaster012', 'Wood036', 'Rust003', 'Rocks007', 'Gravel013', 'RoofingTiles001', 'Carpet003', 'Metal017', 'Wood047', 'WoodFloor039', 'Metal026', 'Facade007', 'Tiles032', 'Ground033', 'full_info.csv', 'Ground020', 'Wood030', 'PavingStones061', 'Fabric027', 'Tiles081', 'Wood014', 'Plastic010', 'Leather024', 'PaintedPlaster016', 'Plaster003', 'Bricks051', 'WoodSiding003', 'Wood013', 'WoodFloor037', 'Rust002', 'Snow005', 'PavingStones048', 'PavingStones084', 'ChristmasTreeOrnament006', 'Carpet013', 'PavingStones081', 'Leather011', 'Tiles054', 'Rocks019', 'Concrete012', 'PaintedWood003', 'PaintedMetal012', 'PavingStones044', 'Tiles041', 'Fabric031', 'Bricks041', 'Wood015', 'WoodFloor034', 'PavingStones053', 'Plaster006', 'WoodFloor020', 'Tiles062', 'Concrete024', 'Tiles071', 'Ground029', 'Wood052', 'Tiles063', 'Rock027', 'Wood037', 'Tiles061', 'Fabric043', 'Gravel009', 'Metal021', 'Carpet008', 'Metal036', 'Ground023', 'Concrete017', 'Rock014', 'PavingStones060', 'WoodFloor033', 'WoodSiding002', 'Bricks050', 'Rocks009', 'Tiles058', 'Facade017', 'Tiles067', 'Bricks039', 'Planks008', 'Plaster002', 'Chip004', 'Moss002', 'PaintedPlaster014', 'Sponge002', 'Concrete033', 'Marble008', 'Wood021', 'Bricks019', 'Candy002', 'Facade011', 'Wood020', 'Bricks048', 'Terrain001', 'Paint003', 'ChristmasTreeOrnament005', 'Carpet005', 'Gravel012', 'Clay002', 'Pipe003', 'Fabric022', 'Planks009', 'Concrete031', 'Road006', 'Rock017', 'Metal030', 'Planks016', 'Tiles053', 'Fabric039', 'Paint001', 'Rock037', 'Rock034', 'PaintedMetal016', 'Tiles057', 'PavingStones087', 'WoodFloor041', 'Leather026', 'PavingStones083', 'Chip001', 'CorrugatedSteel004', 'Chip003', 'Chipboard002', 'Chip002', 'PavingStones035', 'Concrete013', 'Lava004', 'Wood033', 'Carpet014', 'Concrete029', 'Metal014', 'Bricks022', 'Bricks030', 'PavingStones046', 'PavingStones063', 'Tiles039', 'Tiles080', 'PavingStones067', 'RoofingTiles004', 'Bricks052', 'Rocks011', 'Leather022', 'MetalPlates005', 'Wood018', 'ChristmasTreeOrnament001', 'Pipe002', 'Terrazzo007', 'Leather023', 'Tiles066', 'Rocks021', 'PaintedMetal008', 'Wood031', 'Facade014', 'WoodSiding006', 'CorrugatedSteel001', 'Carpet001', 'Ground028', 'Wood027', 'Rock030', 'Ground019', 'Metal019', 'PavingStones047', 'Fabric038', 'PavingStones049', 'Rock021', 'Fabric026', 'PaintedMetal014', 'Rocks013', 'Lava005', 'PavingStones033', 'Wood043', 'Plaster005', 'Ground036', 'Rock015', 'Fabric024', 'WoodSiding004', 'Leather027', 'Marble006', 'PavingStones059', 'Cardboard001', 'Moss003', 'Rock031', 'Bark009', 'WoodFloor021', 'Fabric028', 'Tiles076', 'PavingStones050', 'Bricks020', 'Ground035', 'Ground030', 'Terrazzo003', 'Metal016', 'Fabric041', 'Bricks035', 'Carpet002', 'CorrugatedSteel002', 'PavingStones065', 'PaintedPlaster009', 'Fabric042', 'Clay001', 'Clay003', 'PavingStones089', 'Concrete014', 'Rock038', 'PavingStones055', 'Lava002', 'Wood049', 'Cardboard002', 'Concrete021', 'Tiles028', 'Fabric032', 'Bark007', 'Bricks036', 'SurfaceImperfections011', 'Wood048', 'Metal034', 'WoodSiding005', 'Leather025', 'PavingStones097', 'PavingStones073', 'SurfaceImperfections013', 'Concrete020', 'Tiles075', 'Bricks038', 'PavingStones079', 'Sponge001', 'Bricks034', 'WoodFloor024', 'PaintedWood004', 'Chipboard003', 'Marble010', 'Tiles033', 'Tiles072', 'Rock024', 'Carpet012', 'Metal035', 'Road007', 'Fabric037', 'Ground021', 'PaintedPlaster008', 'Metal028', 'Wood046', 'Road004', 'Road003', 'Terrain003', 'Bricks042', 'WoodFloor022', 'PaintedPlaster004', 'Bricks040', 'SolarPanel001', 'Concrete023', 'Paint005', 'Bark011', 'Tiles048', 'Terrazzo005', 'RoofingTiles002', 'Rocks006', 'Bricks023', 'Plaster004', 'Tiles059', 'WoodFloor028', 'Planks019', 'PavingStones051', 'Wood039', 'Marble012', 'Paint006', 'PaintedWood001', 'Plaster001', 'Metal020', 'Wood051', 'Tiles074', 'Gravel008', 'Concrete016', 'Carpet006', 'PavingStones054', 'WoodSiding001', 'Leather021', 'Planks020', 'Fabric040', 'Metal032', 'Cardboard003', 'Chip006', 'Asphalt015', 'Planks014', 'Concrete022', 'Tiles051', 'Wood019', 'SurfaceImperfections008', 'Rock012', 'Moss004', 'Wood029', 'ChristmasTreeOrnament003', 'Tiles044', 'Tiles064', 'Carpet004', 'Tiles037', 'WoodFloor025', 'Snow003', 'PavingStones086', 'Planks018', 'Smear007', 'Rock016', 'Wood040', 'Concrete030', 'PavingStones045', 'Rock026', 'Fabric036', 'Tiles043', 'Bark008', 'PavingStones071', 'Planks010', 'Plastic011', 'WoodFloor040', 'Bricks037', 'Clay004', 'Snow006', 'Tiles077', 'Gravel014', 'Metal029', 'Chipboard001', 'Tiles070', 'Terrazzo002', 'PavingStones038', 'Paint002', 'WoodFloor032', 'Fabric023', 'Metal023', 'Metal018', 'Snow004', 'Wood028', 'Wood035', 'Gravel011', 'RoofingTiles005', 'Rock025', 'Concrete019', 'Metal024', 'Tiles040', 'Plastic007', 'PavingStones080', 'Rust006', 'Lava003', 'PavingStones082', 'Chip007', 'ChristmasTreeOrnament004', 'Rock013', 'Wood025', 'Concrete025', 'Wood022', 'Concrete027', 'WoodFloor031', 'WoodFloor017', 'Planks021', 'Candy003', 'Tiles027', 'Bricks024', 'SurfaceImperfections012', 'PavingStones078', 'PavingStones066', 'WoodSiding009', 'Bricks028', 'PaintedPlaster002'],
+      }
+    },
+    {
+      "module": "manipulators.EntityManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Entity",
+          "conditions": {
+            "name": "ground_plane.*"
+          }
+        },
+        "mode": "once_for_all",
+        "cf_randomize_materials": {
+          "randomization_level": 1,
+          "materials_to_replace_with": {
+            "provider": "getter.Material",
+            "random_samples": 1,
+            "conditions": {
+              "cp_is_cc_texture": True
+            }
+          }
+        }
+      }
+    },
+    
+    ##### Sample the pose and physical simulation #####
+    {
+      "module": "object.ObjectPoseSampler",
+      "config": {
+        "objects_to_sample": {
+          "provider": "getter.Entity",
+          "conditions": {
+            "cp_physics": True
+          }
+        },
+        "pos_sampler": {
+          "provider":"sampler.Uniform3d",
+          "min": {
+            "provider": "sampler.Uniform3d",
+            "min": [-0.6, -0.6, 0.0],
+            "max": [-0.5, -0.5, 0.0]
+          },
+          "max": {
+            "provider": "sampler.Uniform3d",
+            "min": [0.5, 0.5, 0.6],
+            "max": [0.6, 0.6, 0.8]
+          }
+        },
+        "rot_sampler":{
+          "provider":"sampler.UniformSO3"
+        }
+      }
+    },
+    {
+      "module": "object.PhysicsPositioning",
+      "config": {
+        "min_simulation_time": 3,
+        "max_simulation_time": 10,
+        "check_object_interval": 1,
+        "solver_iters": 25,
+        "substeps_per_frame": 20,
+        "friction": 100.0,
+        "linear_damping": 0.99,
+        "angular_damping": 0.99,
+        "objs_with_box_collision_shape": {
+          "provider": "getter.Entity",
+          "conditions": {
+            "name": "ground_plane.*"
+          }
+        }
+      }
+    },
+
+    ###### Sample Light ######
+    {
+      "module": "lighting.LightSampler",
+      "config": {
+        "lights": [
+        {
+          "location": {
+            "provider": "sampler.Shell",
+            "center": [0, 0, 0],
+            "radius_min": 1,
+            "radius_max": 1.5,
+            "elevation_min": 5,
+            "elevation_max": 89,
+            "uniform_elevation": True
+          },
+          "color": {
+            "provider": "sampler.Color",
+            "min": [0.5, 0.5, 0.5, 1.0],
+            "max": [1.0, 1.0, 1.0, 1.0]
+          },
+          "type": "POINT",
+          "energy": 200
+        }
+        ]
+      }
+    },
+
+    ###### Sample camera poses ######
+    {
+      "module": "camera.CameraSampler",
+      "config": {
+        "cam_poses": [
+        {
+          "number_of_samples": 5,
+          "location": {
+            "provider":"sampler.PartSphere",
+            "center": {
+              "provider": "getter.POI",
+              "selector": {
+                "provider": "getter.Entity",
+                "conditions": {
+                  "cp_bigbird_object": True,
+                  "type": "MESH"
+                }
+              }
+            },
+            "distance_above_center": 0.3,
+            "radius": 2,
+            "mode": "SURFACE"
+          },
+          "rotation": {
+            "format": "look_at",
+            "value": {
+              "provider": "getter.POI",
+              "selector": {
+                "provider": "getter.Entity",
+                "conditions": {
+                  "cp_bigbird_object": True,
+                  "type": "MESH"
+                }
+              }
+            }
+          }
+        }
+        ]
+      }
+    },
+    {
+      "module": "writer.ObjectStateWriter"
+    },
+    {
+      "module": "writer.LightStateWriter"
+    },
+    {
+      "module": "writer.CameraStateWriter"
+    },
+    {
+      "module": "renderer.RgbRenderer",
+      "config": {
+        "output_key": "colors",
+        "samples": 150,
+        "render_distance": True,
+        "render_normals": True
+      }
+    },
+    {
+      "module": "manipulators.WorldManipulator",
+      "config": {
+        "cf_set_world_category_id": 0  # this sets the worlds background category id to 0
+      }
+    },
+    {
+      "module": "renderer.SegMapRenderer",
+      "config": {
+        "map_by": ["class", "instance"]
+      }
+    },
+    {
+      "module": "writer.Hdf5Writer",
+      "config": {
+        "append_to_existing_output": True,
+        "postprocessing_modules": {
+          "distance": [
+            {"module": "postprocessing.TrimRedundantChannels"},
+            {"module": "postprocessing.Dist2Depth"}
+          ]
+        }
+      }
+    }
+  ]
+}

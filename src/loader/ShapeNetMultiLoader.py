@@ -5,10 +5,6 @@ import random
 
 import bpy
 
-from mathutils import Matrix, Vector
-
-from numpy.lib.arraypad import _set_reflect_both
-
 from src.loader.LoaderInterface import LoaderInterface
 from src.utility.Utility import Utility
 from src.utility.LabelIdMapping import LabelIdMapping
@@ -78,6 +74,7 @@ class ShapeNetMultiLoader(LoaderInterface):
                 obj.name = obj_name
                 obj.scale = (0.4, 0.4, 0.4)
                 
+                # Load and assign COCO images into materials of this object
                 print("len(obj.material_slots)", len(obj.material_slots))
                 for j in range(len(obj.material_slots)):
                     mat = obj.material_slots[j]
@@ -87,12 +84,13 @@ class ShapeNetMultiLoader(LoaderInterface):
                     mat_coco = self._load_mat(texture_path)
                     mat.material = mat_coco
 
-                # Save the selected obj
+                # Remap the object uv coordinates
                 bpy.context.view_layer.objects.active = obj
                 bpy.ops.object.editmode_toggle()
                 bpy.ops.uv.sphere_project()
                 bpy.ops.object.editmode_toggle()
 
+                # Save the object meshes to .obj file if not already done so. 
                 save_obj_path = os.path.join(self._output_dir, "objects", "%s.obj" % obj_name)
                 if not os.path.exists(save_obj_path):
                     if not os.path.exists(os.path.dirname(save_obj_path)):
