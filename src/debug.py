@@ -36,12 +36,21 @@ from src.main.Pipeline import Pipeline
 #     "resources/cctextures",
 # ]  # Put in here arguments to use for filling the placeholders in the config file.
 
-config_path = "examples/bigbird_physical/config.yaml"
+# config_path = "examples/bigbird_physical/config.yaml"
+# args = [
+#     "examples/bigbird_physical/output",
+#     "resources/bigbird",
+#     "~/datasets/mscoco/train2017",
+#     "resources/objs.txt", 
+#     "resources/cctextures",
+# ]  # Put in here arguments to use for filling the placeholders in the config file.
+
+config_path = "examples/shapenet_with_cctex/config.yaml"
 args = [
-    "examples/bigbird_physical/output",
-    "resources/bigbird",
-    "~/datasets/mscoco/train2017",
-    "resources/objs.txt", 
+    "examples/shapenet_with_cctex/output",
+    "~/datasets/shapenet/ShapeNetCore.v2/",
+    "/home/qiaog/datasets/cctextures_processed/",
+    "~/datasets/render/shapenetcc/",
     "resources/cctextures",
 ]  # Put in here arguments to use for filling the placeholders in the config file.
 
