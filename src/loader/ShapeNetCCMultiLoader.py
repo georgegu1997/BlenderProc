@@ -49,12 +49,11 @@ class ShapeNetCCMultiLoader(LoaderInterface):
         with open(self._obj_list_path) as f:
             self._obj_list = json.load(f)
 
-    def run(self):
-        # bpy.context.scene.render.use_persistent_data = True
+        print("Total number of distinguished objects:", len(self._obj_list))
 
-        # used_shapenet_objs = random.choices(self._files_use, k=self._num_objects)
-        used_shapenet_objs = random.choices(self._obj_list, k = self._num_objects)
+    def run(self):
         # used_shapenet_objs = [self._obj_list[1]] * self._num_objects
+        used_shapenet_objs = random.choices(self._obj_list, k = self._num_objects)
         for i, selected_obj_info in enumerate(used_shapenet_objs):
             selected_obj_path = os.path.join(
                 self._shapenet_path, 
