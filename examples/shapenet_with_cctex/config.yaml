@@ -185,13 +185,13 @@
           "provider":"sampler.Uniform3d",
           "min": {
             "provider": "sampler.Uniform3d",
-            "min": [-0.25, -0.25, 0.0],
-            "max": [-0.25, -0.25, 0.0]
+            "min": [-0.5, -0.5, 0.0],
+            "max": [-0.5, -0.5, 0.0]
           },
           "max": {
             "provider": "sampler.Uniform3d",
-            "min": [0.25, 0.25, 0.6],
-            "max": [0.25, 0.25, 0.8]
+            "min": [0.5, 0.5, 0.6],
+            "max": [0.5, 0.5, 0.8]
           }
         },
         "rot_sampler":{
@@ -228,7 +228,7 @@
           "location": {
             "provider": "sampler.Shell",
             "center": [0, 0, 0],
-            "radius_min": 1,
+            "radius_min": 1.25,
             "radius_max": 1.5,
             "elevation_min": 5,
             "elevation_max": 89,
@@ -240,7 +240,7 @@
             "max": [1.0, 1.0, 1.0, 1.0]
           },
           "type": "POINT",
-          "energy": 200
+          "energy": 300
         }
         ]
       }
@@ -266,7 +266,7 @@
               }
             },
             "distance_above_center": 0.5,
-            "radius": 2,
+            "radius": 1.5,
             "mode": "SURFACE"
           },
           "rotation": {
@@ -280,10 +280,19 @@
                   "type": "MESH"
                 }
               }
-            }
+            },
+            "inplane_rot": {
+              "provider": "sampler.Value",
+              "type": "float",
+              "min": -0.7854,
+              "max": 0.7854
+            },
           }
         }
-        ]
+        ],
+        "intrinsics": {
+          "fov": 1.2
+        }
       }
     },
     {
