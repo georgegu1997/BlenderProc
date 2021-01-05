@@ -25,15 +25,16 @@ class ShapeNetCCMultiLoader(LoaderInterface):
         LoaderInterface.__init__(self, config)
 
         self._shapenet_path = Utility.resolve_path(self.config.get_string("shapenet_path", SHAPNET_PATH))
+        self._obj_ids = [int(_) for _ in self.config.get_list("obj_ids", [])]
         self._num_objects = self.config.get_int("num_objects", 3)
         self._output_dir = Utility.resolve_path(self.config.get_string("output_dir"))
 
-        self._objects_used = json.load(open(Utility.resolve_path(SHAPENET_OBJECTS_JSON_PATH), 'r'))
+        self._shapenet_objects_used = json.load(open(Utility.resolve_path(SHAPENET_OBJECTS_JSON_PATH), 'r'))
         self._tables_used = json.load(open(Utility.resolve_path(SHAPENET_TABLES_JSON_PATH), 'r'))
         self._taxonomy = json.load(open(Utility.resolve_path(TAXNOMY_FILE_PATH), 'r'))
 
         self._files_used = []
-        for synset_name, obj_ids in self._objects_used.items():
+        for synset_name, obj_ids in self._shapenet_objects_used.items():
             synset_id = next(tax['synsetId'] for tax in self._taxonomy if tax['name'] == synset_name)
             for obj_id in obj_ids:
                 self._files_used.append({
@@ -52,8 +53,13 @@ class ShapeNetCCMultiLoader(LoaderInterface):
         print("Total number of distinguished objects:", len(self._obj_list))
 
     def run(self):
-        # used_shapenet_objs = [self._obj_list[1]] * self._num_objects
-        used_shapenet_objs = random.choices(self._obj_list, k = self._num_objects)
+        if len(self._obj_ids) > 0:
+            bpy.context.scene.world.light_settings.use_ambient_occlusion = True  # turn AO on
+            # bpy.context.scene.world.light_settings.ao_factor = 0.5  # set it to 0.5
+            used_shapenet_objs = [_ for _ in self._obj_list if _['obj_id'] in self._obj_ids]
+        else:
+            used_shapenet_objs = random.choices(self._obj_list, k = self._num_objects)
+        
         for i, selected_obj_info in enumerate(used_shapenet_objs):
             selected_obj_path = os.path.join(
                 self._shapenet_path, 

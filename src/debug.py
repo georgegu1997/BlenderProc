@@ -45,6 +45,7 @@ from src.main.Pipeline import Pipeline
 #     "resources/cctextures",
 # ]  # Put in here arguments to use for filling the placeholders in the config file.
 
+# Generate dataset using ShapeNet objects with CC textures
 config_path = "examples/shapenet_with_cctex/config.yaml"
 args = [
     "examples/shapenet_with_cctex/output",
@@ -52,7 +53,16 @@ args = [
     "/home/qiaog/datasets/cctextures_processed/",
     "~/datasets/render/shapenetcc/",
     "resources/cctextures",
-]  # Put in here arguments to use for filling the placeholders in the config file.
+]
+
+# Create viewing sphere on ShapeNet objects with CC textures
+config_path = "examples/shapenet_with_cctex_grid/config.yaml"
+args = [
+    "examples/shapenet_with_cctex_grid/output",
+    "~/datasets/shapenet/ShapeNetCore.v2/",
+    "/home/qiaog/datasets/cctextures_processed/",
+    "1",
+] 
 
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)
 for window in bpy.context.window_manager.windows:

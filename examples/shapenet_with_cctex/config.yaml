@@ -129,14 +129,14 @@
         "cf_switch_to_emission_shader": {
           "color": {
             "provider": "sampler.Color",
-            "min": [0.5, 0.5, 0.5, 1.0],
+            "min": [1.0, 1.0, 0.8, 1.0],
             "max": [1.0, 1.0, 1.0, 1.0]
           },
           "strength": {
             "provider": "sampler.Value",
             "type": "float",
-            "min": 3,
-            "max": 6
+            "min": 8,
+            "max": 15
           }
         }
       }
@@ -236,11 +236,11 @@
           },
           "color": {
             "provider": "sampler.Color",
-            "min": [0.5, 0.5, 0.5, 1.0],
+            "min": [1.0, 1.0, 0.8, 1.0],
             "max": [1.0, 1.0, 1.0, 1.0]
           },
           "type": "POINT",
-          "energy": 300
+          "energy": 250
         }
         ]
       }
@@ -252,7 +252,7 @@
       "config": {
         "cam_poses": [
         {
-          "number_of_samples": 5,
+          "number_of_samples": 10,
           "location": {
             "provider":"sampler.PartSphere",
             "center": {
