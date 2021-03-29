@@ -8,7 +8,7 @@
 #  <args:4> Path to cc textures (not processed)
 #  <args:5> Path to BOP root
 # Usage:
-#  python run.py examples/shapenet_with_cctex/config.yaml ~/datasets/render/shapenetccbop/ ~/datasets/shapenet/ShapeNetCore.v2/ ~/datasets/cctextures_processed/ ~/datasets/render/bop/ resources/cctextures ~/datasets/bop
+#  python run.py examples/shapenet_with_cctex/config.yaml ~/datasets/render/shapenetccbop/ ~/datasets/shapenet/ShapeNetCore.v2/ ~/datasets/cctextures_processed/ ~/datasets/render/shapenetccbop/ resources/cctextures ~/datasets/bop
 
 {
   "version": 3,

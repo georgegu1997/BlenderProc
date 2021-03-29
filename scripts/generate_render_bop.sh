@@ -1,3 +1,7 @@
+# Usage: sh generate_render_bop.sh <GPU_ID> <output_folder>
+# Example usage: 
+#   sh generate_render_bop.sh 0 /home/qiaog/datasets/render/shapenetccbop/
+
 set -x
 set -u
 set -e
@@ -8,8 +12,9 @@ do
     CUDA_VISIBLE_DEVICES=$1 python run.py \
     examples/shapenet_with_cctex/config.yaml \
     $2 \
-    ~/datasets/shapenet/ShapeNetCore.v2/ \
+    /home/qiaog/datasets/shapenet/ShapeNetCore.v2/ \
     /home/qiaog/datasets/cctextures_processed/ \
     $2 \
-    resources/cctextures
+    resources/cctextures \
+    /home/qiaog/datasets/bop
 done
