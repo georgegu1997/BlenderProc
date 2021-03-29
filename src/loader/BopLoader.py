@@ -13,6 +13,19 @@ from src.utility.Utility import Utility
 from src.utility.Config import Config
 from src.utility.CameraUtility import CameraUtility
 
+BOP_OBJECT_ID_OFFSETS = {
+    "hb": 100,
+    "icbin": 200,
+    "icmi": 300,
+    "itodd": 400,
+    "lm": 500,
+    "lmo": 600,
+    "ruapc": 700,
+    "tless": 800,
+    "tudl": 900,
+    "tyol": 1000,
+    "ycbv": 1100,
+}
 
 class BopLoader(LoaderInterface):
     """ Loads the 3D models of any BOP dataset and allows replicating BOP scenes
@@ -302,7 +315,7 @@ class BopLoader(LoaderInterface):
             cur_obj = bpy.context.selected_objects[-1]
 
         cur_obj.scale = Vector((scale, scale, scale))
-        cur_obj['category_id'] = obj_id
+        cur_obj['category_id'] = obj_id + BOP_OBJECT_ID_OFFSETS[self.bop_dataset_name]
         cur_obj['model_path'] = model_path
         if not self._has_external_texture:
             mat = self._load_materials(cur_obj)

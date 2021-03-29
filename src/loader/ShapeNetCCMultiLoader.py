@@ -20,6 +20,8 @@ SHAPENET_TABLES_JSON_PATH = "examples/shapenet_with_scenenet/training_shapenet_t
 TAXNOMY_FILE_PATH = '/home/qiaog/datasets/shapenet/ShapeNetCore.v2/taxonomy.json'
 OBJ_LIST_PATH = "notebooks/shapenet_cc_objs.json"
 
+OBJECT_ID_OFFSET = 10000
+
 class ShapeNetCCMultiLoader(LoaderInterface):
     def __init__(self, config):
         LoaderInterface.__init__(self, config)
@@ -27,6 +29,7 @@ class ShapeNetCCMultiLoader(LoaderInterface):
         self._shapenet_path = Utility.resolve_path(self.config.get_string("shapenet_path", SHAPNET_PATH))
         self._obj_ids = [int(_) for _ in self.config.get_list("obj_ids", [])]
         self._num_objects = self.config.get_int("num_objects", 3)
+        self._object_scale = self.config.get_float("object_scale", 0.4)
         self._output_dir = Utility.resolve_path(self.config.get_string("output_dir"))
 
         self._shapenet_objects_used = json.load(open(Utility.resolve_path(SHAPENET_OBJECTS_JSON_PATH), 'r'))
@@ -71,10 +74,10 @@ class ShapeNetCCMultiLoader(LoaderInterface):
             loaded_obj = Utility.import_objects(selected_obj_path)
 
             for obj in loaded_obj:
-                obj_name = "obj_%04d" % selected_obj_info['obj_id']
+                obj_name = "obj_%06d" % (selected_obj_info['obj_id'] + OBJECT_ID_OFFSET) 
                 obj.name = obj_name
-                obj['category_id'] = selected_obj_info['obj_id']
-                obj.scale = (0.4, 0.4, 0.4)
+                obj['category_id'] = (selected_obj_info['obj_id'] + OBJECT_ID_OFFSET) 
+                obj.scale = (self._object_scale, self._object_scale, self._object_scale)
 
                 print("len(obj.material_slots)", len(obj.material_slots))
                 cc_asset_names = selected_obj_info['cc_asset_names']
