@@ -418,8 +418,8 @@
           "energy": {
             "provider": "sampler.Value",
             "type": "float",
-            "min": 200,
-            "max": 500
+            "min": 100,
+            "max": 300
           },
         }
         ]

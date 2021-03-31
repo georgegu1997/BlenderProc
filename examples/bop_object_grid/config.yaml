@@ -1,6 +1,3 @@
-#  Example usage:
-#    python run.py examples/shapenet_with_cctex_grid/config.yaml examples/shapenet_with_cctex_grid/output/1/ ~/datasets/shapenet/ShapeNetCore.v2/ /home/qiaog/datasets/cctextures_processed/ 1
-
 {
   "version": 3,
   "setup": {
@@ -8,6 +5,7 @@
     "pip": [
       "pyyaml",
       "h5py",
+      "imageio"
     ]
   },
   "modules": [
@@ -16,6 +14,7 @@
       "config":{
         "global": {
           "output_dir": "<args:0>"
+          "sys_paths": ["/home/qiaog/src/bop_toolkit"]
         }
       }
     },
@@ -27,7 +26,6 @@
         "shapenet_path": "<args:1>",
         "cctexture_path": "<args:2>",
         "obj_ids": ["<args:3>"],
-        "object_scale": 0.25,
         "add_properties": {
           "cp_shape_net_object": True,
         }
@@ -40,26 +38,27 @@
       "config": {
         "cam_poses": [
         {
-          "number_of_samples": 252,
+          "number_of_samples": 80,
           "location": {
-            "provider": "sampler.UniformSphere",
+            "provider":"sampler.Sphere",
             "center": [0, 0, 0],
-            "repeat": 6
+            "radius": 1,
+            "mode": "SURFACE"
           },
           "rotation": {
             "format": "look_at",
             "value": [0, 0, 0],
             "inplane_rot": {
-              "provider": "sampler.DefinedValue",
-              "values": [0.0, 1.0471975511965976, 2.0943951023931953, 3.141592653589793, 4.1887902047863905, 5.235987755982989]
+              "provider": "sampler.Value",
+              "type": "float",
+              "min": -3.14159265359,
+              "max": 3.14159265359
             },
           }
         }
         ],
         "intrinsics": {
-          "fov": 1.0,
-          "resolution_x": 256,
-          "resolution_y": 256,
+          "fov": 1.2
         }
       }
     },
@@ -76,7 +75,7 @@
       "module": "renderer.RgbRenderer",
       "config": {
         "output_key": "colors",
-        "samples": 256,
+        "samples": 150,
         "render_distance": True,
         "render_normals": True
       }

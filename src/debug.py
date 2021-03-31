@@ -57,24 +57,24 @@ args = [
 ]
 
 # Generate dataset using BOP objects
-config_path = "examples/render_bop_objects/config.yaml"
-args = [
-    "examples/render_bop_objects/output",
-    "/home/qiaog/datasets/shapenet/ShapeNetCore.v2/",
-    "/home/qiaog/datasets/cctextures_processed/",
-    "/home/qiaog/datasets/render/shapenetcc/",
-    "resources/cctextures",
-    "/home/qiaog/datasets/bop",
-]
+# config_path = "examples/render_bop_objects/config.yaml"
+# args = [
+#     "examples/render_bop_objects/output",
+#     "/home/qiaog/datasets/shapenet/ShapeNetCore.v2/",
+#     "/home/qiaog/datasets/cctextures_processed/",
+#     "/home/qiaog/datasets/render/shapenetcc/",
+#     "resources/cctextures",
+#     "/home/qiaog/datasets/bop",
+# ]
 
 # Create viewing sphere on ShapeNet objects with CC textures
-# config_path = "examples/shapenet_with_cctex_grid/config.yaml"
-# args = [
-#     "examples/shapenet_with_cctex_grid/output",
-#     "~/datasets/shapenet/ShapeNetCore.v2/",
-#     "/home/qiaog/datasets/cctextures_processed/",
-#     "1",
-# ] 
+config_path = "examples/shapenet_with_cctex_grid/config.yaml"
+args = [
+    "examples/shapenet_with_cctex_grid/output",
+    "~/datasets/shapenet/ShapeNetCore.v2/",
+    "/home/qiaog/datasets/cctextures_processed/",
+    "1",
+] 
 
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)
 for window in bpy.context.window_manager.windows:

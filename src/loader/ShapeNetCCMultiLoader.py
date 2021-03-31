@@ -9,6 +9,7 @@ import bpy
 from src.loader.LoaderInterface import LoaderInterface
 from src.utility.Utility import Utility
 from src.utility.LabelIdMapping import LabelIdMapping
+from src.main.GlobalStorage import GlobalStorage
 
 import json
 
@@ -102,6 +103,9 @@ class ShapeNetCCMultiLoader(LoaderInterface):
                 #         os.makedirs(os.path.dirname(save_obj_path))
                 # bpy.ops.export_scene.obj(filepath=save_obj_path, use_selection=True)
 
+                obj_diameter = (obj.dimensions[0]**2 + obj.dimensions[1]**2 + obj.dimensions[2]**2) ** (0.5)
+                GlobalStorage.set("obj_diamater", obj_diameter)
+                
             self._set_properties(loaded_obj)
 
     def _load_cc_mat(self, folder_name):
