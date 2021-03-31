@@ -6,7 +6,7 @@ set -x
 set -u
 set -e
 
-for i in {1..1000}
+for i in {1..2000}
 do
     echo "$i"
     CUDA_VISIBLE_DEVICES=$1 python run.py \

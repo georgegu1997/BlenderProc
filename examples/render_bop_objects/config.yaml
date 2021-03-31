@@ -47,7 +47,7 @@
       }
     },
 
-    ##### Load Bop Objects from these datasets #####
+    ##### Load Bop Objects from multiple datasets (excluding YCB and LM for now) #####
     {
       "module": "loader.BopLoader",
       "config": {
@@ -71,21 +71,6 @@
         "mm2m": True,
         "sample_objects": True,
         "num_of_objs_to_sample": 1,
-        "obj_instances_limit": 1,
-        "add_properties": {
-          "cp_sampled_object": True, 
-          "cp_physics": True,
-        }
-      }
-    },
-    {
-      "module": "loader.BopLoader",
-      "config": {
-        "bop_dataset_path": "<args:5>/icmi",
-        "model_type": "",
-        "mm2m": True,
-        "sample_objects": True,
-        "num_of_objs_to_sample": 3,
         "obj_instances_limit": 1,
         "add_properties": {
           "cp_sampled_object": True, 
@@ -165,6 +150,84 @@
         "add_properties": {
           "cp_sampled_object": True, 
           "cp_physics": True,
+        }
+      }
+    },
+
+    ##### Set the color for tless and itodd objects to be gray #####
+    {
+      "module": "manipulators.MaterialManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Material",
+          "conditions": [
+          {
+            "name": "bop_itodd_vertex_col_material.*"
+          },
+          {
+            "name": "bop_tless_vertex_col_material.*"
+          }
+          ]
+        },
+        "cf_set_base_color": {
+          "provider": "sampler.Color",
+          "grey": True,
+          "min": [0.3, 0.3, 0.3, 1.0],
+          "max": [0.9, 0.9, 0.9, 1.0]
+        }
+      }
+    },
+
+    ##### Randomize the material ######
+    {
+      "module": "manipulators.MaterialManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Material",
+          "conditions": [
+          {
+            "name": "bop_tless_vertex_col_material.*"
+          },
+          {
+            "name": "bop_tyol_vertex_col_material.*"
+          },
+          {
+            "name": "bop_itodd_vertex_col_material.*"
+          }, 
+          {
+            "name": "bop_tudl_vertex_col_material.*"
+          }, 
+          {
+            "name": "bop_hb_vertex_col_material.*"
+          }, 
+          {
+            "name": "bop_icbin_vertex_col_material.*"
+          }, 
+          {
+            "name": "bop_ruapc_vertex_col_material.*"
+          }, 
+          {
+            "cp_is_cc_texture": True
+          }, 
+          ]
+        },
+        "cf_set_specular": {
+          "provider": "sampler.Value",
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cf_set_roughness": {
+          "provider": "sampler.Value",
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "cf_set_metallic": {
+          "provider": "sampler.Value",
+          "type": "float",
+          "min": 0.0,
+          "max": 0.5
         }
       }
     },
@@ -352,7 +415,12 @@
             "max": [1.0, 1.0, 1.0, 1.0]
           },
           "type": "POINT",
-          "energy": 250
+          "energy": {
+            "provider": "sampler.Value",
+            "type": "float",
+            "min": 200,
+            "max": 500
+          },
         }
         ]
       }
@@ -364,6 +432,16 @@
       "config": {
         "cam_poses": [
         {
+          "proximity_checks": {
+            "min": 0.3
+          },
+          "excluded_objs_in_proximity_check":  {
+            "provider": "getter.Entity",
+            "conditions": {
+              "name": "ground_plane.*",
+              "type": "MESH"
+            }
+          },
           "number_of_samples": 20,
           "location": {
             "provider":"sampler.PartSphere",
@@ -377,8 +455,18 @@
                 }
               }
             },
-            "distance_above_center": 0.5,
-            "radius": 1.5,
+            "distance_above_center": {
+              "provider": "sampler.Value",
+              "type": "float",
+              "min": 0.2,
+              "max": 0.5
+            },
+            "radius": {
+              "provider": "sampler.Value",
+              "type": "float",
+              "min": 0.5,
+              "max": 2
+            },
             "mode": "SURFACE"
           },
           "rotation": {
