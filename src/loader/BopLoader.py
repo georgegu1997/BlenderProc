@@ -13,6 +13,8 @@ from src.utility.Utility import Utility
 from src.utility.Config import Config
 from src.utility.CameraUtility import CameraUtility
 
+from src.main.GlobalStorage import GlobalStorage
+
 BOP_OBJECT_ID_OFFSETS = {
     "hb": 100,
     "icbin": 200,
@@ -76,6 +78,8 @@ class BopLoader(LoaderInterface):
         self.bop_dataset_path = self.config.get_string("bop_dataset_path")
         self.scene_id = self.config.get_int("scene_id", -1)
         self.obj_ids = self.config.get_list("obj_ids", [])
+        for i in range(len(self.obj_ids)):
+            self.obj_ids[i] = int(self.obj_ids[i])
         if self.obj_ids or self.sample_objects:
             self.allow_duplication = True
         else:
@@ -85,6 +89,7 @@ class BopLoader(LoaderInterface):
         self.scale = 0.001 if self.config.get_bool("mm2m", False) else 1
         self.bop_dataset_name = os.path.basename(self.bop_dataset_path)
         self._has_external_texture = self.bop_dataset_name in ["ycbv", "ruapc"]
+        self._render_grid = self.config.get_bool("render_grid", False)
 
     def run(self):
         """ Load BOP data """
@@ -158,6 +163,12 @@ class BopLoader(LoaderInterface):
                     cur_obj = self._load_mesh(obj_id, model_p, scale=self.scale)
                     loaded_objects.append(cur_obj)
             self._set_properties(loaded_objects)
+
+            if self._render_grid:
+                # Record the object diameter for future use
+                obj_diameter = (cur_obj.dimensions[0]**2 + cur_obj.dimensions[1]**2 + cur_obj.dimensions[2]**2) ** (0.5)
+                GlobalStorage.set("obj_diamater", obj_diameter * self.scale)
+                bpy.context.scene.world.light_settings.use_ambient_occlusion = True  # turn AO on
 
         # replicate scene: load scene objects, object poses, camera intrinsics and camera poses
         else:
@@ -328,6 +339,9 @@ class BopLoader(LoaderInterface):
             self._load_texture(cur_obj, texture_file_path)
         cur_obj["is_bop_object"] = True
         cur_obj["bop_dataset_name"] = self.bop_dataset_name
+
+        
+
         return cur_obj
 
     def _load_materials(self, cur_obj):

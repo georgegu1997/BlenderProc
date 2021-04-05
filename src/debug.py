@@ -76,6 +76,16 @@ args = [
 #     "1",
 # ] 
 
+# BOP Object render grid
+config_path = "examples/bop_object_grid/config.yaml"
+args = [
+    'examples/bop_object_grid/output/',
+    "/home/qiaog/datasets/bop/",
+    "ycbv",
+    "1",
+]
+
+
 # Focus the 3D View, this is necessary to make undo work (otherwise undo will focus on the scripting area)
 for window in bpy.context.window_manager.windows:
     screen = window.screen

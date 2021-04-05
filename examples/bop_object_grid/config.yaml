@@ -1,3 +1,8 @@
+#  Usage:
+#    python run.py examples/bop_object_grid/config.yaml <args:0 output_dir> <args:1 bop root> <args:2 dataset name> <args:3 object ID>
+#  Example usage:
+#    python run.py examples/bop_object_grid/config.yaml examples/bop_object_grid/output/ ~/datasets/bop/ ycbv 1
+
 {
   "version": 3,
   "setup": {
@@ -5,7 +10,6 @@
     "pip": [
       "pyyaml",
       "h5py",
-      "imageio"
     ]
   },
   "modules": [
@@ -13,21 +17,49 @@
       "module": "main.Initializer",
       "config":{
         "global": {
-          "output_dir": "<args:0>"
-          "sys_paths": ["/home/qiaog/src/bop_toolkit"]
+          "output_dir": "<args:0>",
+          "sys_paths": ["/home/qiaog/src/bop_toolkit"],
         }
       }
     },
 
-    ##### Load shapnet objects and perturbed CC textures with predefined correspondence #####
+    ##### Load BOP object #####
     {
-      "module": "loader.ShapeNetCCMultiLoader",
+      "module": "loader.BopLoader",
       "config": {
-        "shapenet_path": "<args:1>",
-        "cctexture_path": "<args:2>",
-        "obj_ids": ["<args:3>"],
+        "bop_dataset_path": "<args:1>/<args:2>",
+        "model_type": "",
+        "mm2m": True,
+        "render_grid": True,
+        "obj_ids": [<args:3>], 
+        "obj_instances_limit": 1,
         "add_properties": {
-          "cp_shape_net_object": True,
+          "cp_sampled_object": True, 
+          "cp_physics": True,
+        }
+      }
+    },
+
+    ##### Set the color for tless and itodd objects to be gray #####
+    {
+      "module": "manipulators.MaterialManipulator",
+      "config": {
+        "selector": {
+          "provider": "getter.Material",
+          "conditions": [
+          {
+            "name": "bop_itodd_vertex_col_material.*"
+          },
+          {
+            "name": "bop_tless_vertex_col_material.*"
+          }
+          ]
+        },
+        "cf_set_base_color": {
+          "provider": "sampler.Color",
+          "grey": True,
+          "min": [0.8, 0.8, 0.8, 1.0],
+          "max": [1.0, 1.0, 1.0, 1.0]
         }
       }
     },
@@ -38,27 +70,26 @@
       "config": {
         "cam_poses": [
         {
-          "number_of_samples": 80,
+          "number_of_samples": 252,
           "location": {
-            "provider":"sampler.Sphere",
+            "provider": "sampler.UniformSphere",
             "center": [0, 0, 0],
-            "radius": 1,
-            "mode": "SURFACE"
+            "repeat": 6
           },
           "rotation": {
             "format": "look_at",
             "value": [0, 0, 0],
             "inplane_rot": {
-              "provider": "sampler.Value",
-              "type": "float",
-              "min": -3.14159265359,
-              "max": 3.14159265359
+              "provider": "sampler.DefinedValue",
+              "values": [0.0, 1.0471975511965976, 2.0943951023931953, 3.141592653589793, 4.1887902047863905, 5.235987755982989]
             },
           }
         }
         ],
         "intrinsics": {
-          "fov": 1.2
+          "fov": 1.0,
+          "resolution_x": 256,
+          "resolution_y": 256,
         }
       }
     },
@@ -75,7 +106,7 @@
       "module": "renderer.RgbRenderer",
       "config": {
         "output_key": "colors",
-        "samples": 150,
+        "samples": 256,
         "render_distance": True,
         "render_normals": True
       }

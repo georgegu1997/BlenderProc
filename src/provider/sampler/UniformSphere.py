@@ -36,8 +36,7 @@ class UniformSphere(Provider):
 
         # Center of the sphere.
         self._center = np.array(self.config.get_list("center", [0.0, 0.0, 0.0]))
-        # Radius of the sphere.
-        self._radius = self.config.get_float("radius", GlobalStorage.get("obj_diamater")) * 1.25
+        
 
         # How many times each value repeats
         self._repeat = self.config.get_int("repeat", 1)
@@ -47,11 +46,14 @@ class UniformSphere(Provider):
         :return: Sampled value. Type: Mathutils Vector
         """
 
+        # Radius of the sphere.
+        radius = self.config.get_float("radius", GlobalStorage.get("obj_diamater")) * 1.25
+
         position = mathutils.Vector()
         current = self._count // self._repeat
         # print("UniformSphere current:", current)
         for i in range(3):
-            position[i] = self._total_points[current, i] * self._radius + self._center[i]
+            position[i] = self._total_points[current, i] * radius + self._center[i]
         self._count += 1
 
         return position
