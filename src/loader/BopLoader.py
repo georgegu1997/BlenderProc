@@ -167,7 +167,7 @@ class BopLoader(LoaderInterface):
             if self._render_grid:
                 # Record the object diameter for future use
                 obj_diameter = (cur_obj.dimensions[0]**2 + cur_obj.dimensions[1]**2 + cur_obj.dimensions[2]**2) ** (0.5)
-                GlobalStorage.set("obj_diamater", obj_diameter * self.scale)
+                GlobalStorage.set("obj_diamater", obj_diameter * self.scale * 1.2)
                 bpy.context.scene.world.light_settings.use_ambient_occlusion = True  # turn AO on
 
         # replicate scene: load scene objects, object poses, camera intrinsics and camera poses
