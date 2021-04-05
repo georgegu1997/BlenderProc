@@ -284,8 +284,10 @@ class BopLoader(LoaderInterface):
 
         texture_file_path = ""  # only needed for ycbv objects
 
-        # Gets the objects if it is already loaded         
+        obj_id_output = obj_id + BOP_OBJECT_ID_OFFSETS[self.bop_dataset_name]
+        # Gets the objects if it is already loaded 
         cur_obj = self._get_loaded_obj(model_path)
+        
         # if the object was not previously loaded - load it, if duplication is allowed - duplicate it
         if cur_obj is None:
             if self._has_external_texture:
@@ -314,8 +316,9 @@ class BopLoader(LoaderInterface):
             bpy.ops.object.duplicate({"object": cur_obj, "selected_objects": [cur_obj]})
             cur_obj = bpy.context.selected_objects[-1]
 
+        cur_obj.name = "obj_%06d" % obj_id_output
         cur_obj.scale = Vector((scale, scale, scale))
-        cur_obj['category_id'] = obj_id + BOP_OBJECT_ID_OFFSETS[self.bop_dataset_name]
+        cur_obj['category_id'] = obj_id_output
         cur_obj['model_path'] = model_path
         if not self._has_external_texture:
             mat = self._load_materials(cur_obj)

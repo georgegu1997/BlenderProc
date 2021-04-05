@@ -73,11 +73,12 @@ class ShapeNetCCMultiLoader(LoaderInterface):
             )
 
             loaded_obj = Utility.import_objects(selected_obj_path)
+            obj_id_output = selected_obj_info['obj_id'] + OBJECT_ID_OFFSET
 
             for obj in loaded_obj:
-                obj_name = "obj_%06d" % (selected_obj_info['obj_id'] + OBJECT_ID_OFFSET) 
+                obj_name = "obj_%06d" % obj_id_output
                 obj.name = obj_name
-                obj['category_id'] = (selected_obj_info['obj_id'] + OBJECT_ID_OFFSET) 
+                obj['category_id'] = obj_id_output
                 obj.scale = (self._object_scale, self._object_scale, self._object_scale)
 
                 print("len(obj.material_slots)", len(obj.material_slots))

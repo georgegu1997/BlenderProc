@@ -1,6 +1,6 @@
 # Usage: sh generate_render_bop.sh <GPU_ID> <output_folder>
 # Example usage: 
-#   bash generate_render_bop.sh 0 /home/qiaog/datasets/render/shapenetccbop/
+#   bash scripts/generate_render_bop.sh 0 /home/qiaog/datasets/render/shapenetccbop/
 
 set -x
 set -u
